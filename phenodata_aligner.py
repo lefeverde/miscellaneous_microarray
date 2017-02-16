@@ -8,19 +8,7 @@ import argparse
 from collections import OrderedDict
 
 
-parser = argparse.ArgumentParser()
-req = parser.add_argument_group('required arguments')
-opt = parser.add_argument_group('optional arguments')
 
-req.add_argument('-i',
-    help = 'input mis-aligned csv file',
-    metavar = '',
-    required=True)
-opt.add_argument('-o',
-    default = None,
-    help='optional output file name',
-    metavar='')
-args = parser.parse_args()
 
 def pheno_to_list(pheno_file, skip_header=True):
     '''
@@ -103,7 +91,21 @@ def proper_aligner(pheno_list, delim=':'):
     return out_list
 
 def main():
+    parser = argparse.ArgumentParser()
+    req = parser.add_argument_group('required arguments')
+    opt = parser.add_argument_group('optional arguments')
+
+    req.add_argument('-i',
+        help = 'input mis-aligned csv file',
+        metavar = '',
+        required=True)
+    opt.add_argument('-o',
+        default = None,
+        help='optional output file name',
+        metavar='')
+    args = parser.parse_args()
     pheno_file = args.i
+    
     # TODO add arguement to allow different delims
     pheno_list = pheno_to_list(pheno_file)
     aligned_pheno = proper_aligner(pheno_list)
