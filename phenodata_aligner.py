@@ -41,19 +41,24 @@ def header_maker(pheno_list, delim=':'):
 
     header_list = []
     header_list.append('sampleID')
-    #header_dict = OrderedDict()
-    #header_dict['sampleID'] = []
-    #head_str = 'sampleID,'
+
+    # list for empty field count and row
+    row_tup_list = []
+
+    # fixed returning None bug
     for cur_row in pheno_list:
-        if cur_row.count('') == 0:
-            for cur_val in cur_row[1:]:
-                cur_field = re.sub(' ', '_', cur_val.split(delim)[0])
-                header_list.append(cur_field)
-                #head_str = head_str + cur_field + ','
-                #header_dict[cur_field] = []
-            return header_list
-            #return header_dict
-            #return(head_str.strip(','))
+        row_w_count = (cur_row.count(''), cur_row)
+        row_tup_list.append(row_w_count)
+
+    # sorts in descending order and uses first for header
+    header_row = sorted(row_tup_list, key=lambda x: x[0])[0]
+    for cur_val in header_row[1][1:]:
+        cur_field = re.sub(' ', '_', cur_val.split(delim)[0])
+        header_list.append(cur_field)
+    return header_list
+
+
+
 
 def proper_aligner(pheno_list, delim=':'):
     '''
@@ -67,6 +72,8 @@ def proper_aligner(pheno_list, delim=':'):
     '''
     #header_dict = header_maker(pheno_list, delim=delim)
     header_list = header_maker(pheno_list, delim=delim)
+
+
     out_list = []
     out_list.append(header_list)
     for cur_row in pheno_list:
@@ -105,7 +112,7 @@ def main():
         metavar='')
     args = parser.parse_args()
     pheno_file = args.i
-    
+
     # TODO add arguement to allow different delims
     pheno_list = pheno_to_list(pheno_file)
     aligned_pheno = proper_aligner(pheno_list)
